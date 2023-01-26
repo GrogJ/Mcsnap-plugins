@@ -1,0 +1,47 @@
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class LGBTQPlusPlugin extends JavaPlugin {
+    private List<String> playersWithSword = new ArrayList<>();
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("This command can only be run by a player.");
+            return true;
+        }
+
+        Player player = (Player) sender;
+        Inventory inventory = player.getInventory();
+
+        if (!inventory.contains(Material.DRAGON_EGG)) {
+            player.sendMessage(ChatColor.RED + "You need an Ender Dragon Egg to use this command!");
+            return true;
+        }
+        
+        inventory.remove(Material.DRAGON_EGG);
+        ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
+        ItemMeta swordMeta = sword.getItemMeta();
+        swordMeta.setUnbreakable(true);
+        swordMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+        swordMeta.setDisplayName(ChatColor.AQUA + "LGBTQ+Sword");
+        sword.setItemMeta(swordMeta);
+        sword.setDamage(13);
+        inventory.addItem(sword);
+        playersWithSword.add(player.getName()); // Add player's name to the list of players with the sword
+        player.sendMessage(ChatColor.GREEN + "You have received the LGBTQ+ Sword!");
+        player.sendMessage(ChatColor.AQUA + "Players who have received the sword before: " + playersWithSword.toString());
+        return true;
+    }
+}    
