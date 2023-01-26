@@ -1,0 +1,60 @@
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
+
+
+public class LGBTQPlusPlugin extends JavaPlugin {
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("This command can only be run by a player.");
+            return true;
+        }
+
+        Player player = (Player) sender;
+
+        ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
+        ItemMeta swordMeta = sword.getItemMeta();
+        swordMeta.setUnbreakable(true);
+        swordMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+        swordMeta.setDisplayName(ChatColor.AQUA + "LGBTQ+ Sword");
+        sword.setDamage(10);
+        sword.setItemMeta(swordMeta);
+
+        player.getInventory().addItem(sword);
+        player.sendMessage(ChatColor.GREEN + "You have received the LGBTQ+ Sword!");
+        return true;
+    }
+}
+public class UnbreakableSword extends JavaPlugin implements Listener {
+
+    @Override
+    public void onEnable() {
+        getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (event.getBlock().getType() == Material.STONE) {
+            event.setDropItems(false); // prevent the block from dropping its normal item
+            event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), createSword());
+        }
+    }
+
+    private ItemStack createSword() {
+        ItemStack sword = new ItemStack(Material.STONE_SWORD);
+        sword.setDurability((short) 0); // make the sword unbreakable
+        sword.setDamage(13); // set the damage to 13
+        return sword;
+    }
+}
